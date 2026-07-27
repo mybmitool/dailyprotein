@@ -1,0 +1,95 @@
+
+================================================================================
+                    广告位修复完整报告
+================================================================================
+
+一、修复内容总览
+
+1. ads.json
+   - 全局 enabled: false → true
+   - 所有13个slot的enabled: false → true
+   - 结果: 所有广告位现在可以显示
+
+2. 工具详情页 (6个文件)
+   - 新增 tool_middle 广告位在"Related Articles"上方
+   - 文件列表:
+     * tools/protein-intake-calculator.html
+     * tools/macro-split-planner.html
+     * tools/protein-source-comparator.html
+     * tools/vegan-protein-adequacy-calculator.html
+     * tools/post-workout-protein-timing-tool.html
+     * tools/meal-protein-tracker.html
+
+3. post.html 模板
+   - article_top: 从面包屑之后 → 移到导航栏和面包屑之间
+   - article_middle: 从header之后 → 移到作者框上方
+   - article_bottom: 确认在页脚上方
+
+4. protein-leverage文章页
+   - article_top: 从面包屑之后 → 移到导航栏和面包屑之间
+   - article_middle: 从header之后 → 移到作者框上方
+   - article_bottom: 确认在页脚上方
+
+二、广告位位置结构要求验证
+
+页面类型          广告位          要求位置                    状态
+--------------------------------------------------------------------------------
+网站首页          hero_top        导航栏和hero之间            ✅ 正确
+                  middle          文章栏上方                  ✅ 正确
+                  footer          页脚上方                    ✅ 正确
+
+工具首页          tool_top        导航栏和面包屑之间          ✅ 正确
+                  tool_middle     内容区中部                  ✅ 正确
+                  tool_bottom     页脚上方                    ✅ 正确
+
+博客首页          blog_top        hero下方                    ✅ 正确
+                  blog_mid        每9篇文章后                 ✅ 正确
+                  blog_bottom     页脚上方                    ✅ 正确
+
+工具详情页        tool_top        导航栏和面包屑之间          ✅ 正确
+                  tool_middle     相关文章上方                ✅ 已修复
+                  tool_bottom     页脚上方                    ✅ 正确
+
+文章详情页        article_top     导航栏和面包屑之间          ✅ 已修复
+                  article_middle  作者框上方                  ✅ 已修复
+                  article_bottom  页脚上方                    ✅ 正确
+
+about页           about_bottom    页脚上方                    ✅ 正确
+
+三、ADS统一管理验证
+
+所有页面都满足以下条件:
+1. ✅ 引用了 ads-loader.js
+2. ✅ 广告位div的id与ads.json中的slot name完全匹配
+3. ✅ ads-loader.js通过fetch读取ads.json配置
+4. ✅ 根据enabled状态动态控制广告位显示/隐藏
+
+统一管理方式:
+- 开启广告位: 在ads.json中将对应slot的enabled设为true
+- 关闭广告位: 在ads.json中将对应slot的enabled设为false
+- 所有页面自动响应，无需修改HTML
+
+四、文件清单
+
+根目录:
+  - index.html
+  - about.html
+  - style.css
+  - ads.json (已修复)
+  - ads-loader.js
+
+tools/:
+  - index.html
+  - protein-intake-calculator.html (已修复)
+  - macro-split-planner.html (已修复)
+  - protein-source-comparator.html (已修复)
+  - vegan-protein-adequacy-calculator.html (已修复)
+  - post-workout-protein-timing-tool.html (已修复)
+  - meal-protein-tracker.html (已修复)
+
+blog/:
+  - index.html
+  - post.html (已修复)
+  - protein-leverage-hypothesis-why-low-protein-makes-you-overeat.html (已修复)
+
+================================================================================
