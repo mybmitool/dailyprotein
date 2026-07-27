@@ -1,0 +1,38 @@
+{
+  "domain": "dailyprotein.net",
+  "prefix": "dp",
+  "author": {
+    "name": "Derek 'Dex' Armstrong",
+    "email": "contact@dailyprotein.net",
+    "jobTitle": "Sports Nutrition Consultant",
+    "location": "San Diego, California",
+    "alumniOf": "San Diego State University",
+    "degree": "MS Exercise Physiology",
+    "certs": [
+      "CSCS",
+      "Precision Nutrition Level 2"
+    ]
+  },
+  "theme": {
+    "primary": "#2563eb",
+    "secondary": "#f59e0b",
+    "accent": "#10b981",
+    "dark": "#1f2937",
+    "light": "#f3f4f6"
+  },
+  "social": {
+    "twitter": "https://twitter.com/dailyprotein",
+    "instagram": "https://instagram.com/dailyprotein",
+    "youtube": "https://youtube.com/@dailyprotein"
+  },
+  "layouts": {
+    "home": "E",
+    "tools_home": "F",
+    "blog_home": "A",
+    "post": "B",
+    "tool": "C",
+    "about": "D",
+    "contact": "A",
+    "faq": "B"
+  }
+}
