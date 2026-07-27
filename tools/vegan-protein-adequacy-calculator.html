@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegan Protein Adequacy Calculator | DailyProtein.net</title>
+<meta name="description" content="Check if your plant-based meals provide enough lysine, methionine, and total protein. Free calculator with amino acid coverage analysis.">
+<link rel="canonical" href="https://dailyprotein.net/tools/vegan-protein-adequacy-calculator.html">
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" type="image/x-icon" href="../favicon.ico">
+
+<meta property="og:title" content="Vegan Protein Adequacy Calculator | DailyProtein.net">
+<meta property="og:description" content="Check lysine, methionine, and total protein coverage for plant-based diets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dailyprotein.net/tools/vegan-protein-adequacy-calculator.html">
+<meta property="og:image" content="https://dailyprotein.net/images/og-default.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Vegan Protein Adequacy Calculator",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web Browser",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "description": "Check lysine, methionine, and total protein coverage for plant-based diets.",
+  "url": "https://dailyprotein.net/tools/vegan-protein-adequacy-calculator.html"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://dailyprotein.net/"},
+    {"@type": "ListItem", "position": 2, "name": "Tools", "item": "https://dailyprotein.net/tools/"},
+    {"@type": "ListItem", "position": 3, "name": "Vegan Protein Adequacy Calculator", "item": "https://dailyprotein.net/tools/vegan-protein-adequacy-calculator.html"}
+  ]
+}
+</script>
+</head>
+<body>
+
+<nav class="dp-nav">
+  <div class="dp-nav-container">
+    <a href="../index.html" class="dp-nav-logo">Daily<span>Protein</span></a>
+    <button class="dp-nav-toggle" onclick="document.querySelector('.dp-nav-links').classList.toggle('active')">☰</button>
+    <ul class="dp-nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="./index.html">Tools</a></li>
+      <li><a href="../blog/index.html">Blog</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contact.html">Contact</a></li>
+      <li><a href="../faq.html">FAQ</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="dp-container">
+  <nav class="dp-breadcrumbs" aria-label="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span><a href="./index.html">Tools</a><span>/</span><span>Vegan Protein Adequacy Calculator</span>
+  </nav>
+</div>
+
+<div class="dp-container"><div id="tool_top" data-ad-slot="tool_top" class="dp-ad-slot"></div></div>
+
+<section class="dp-tool-hero">
+  <div class="dp-container">
+    <h1>Vegan Protein Adequacy Calculator</h1>
+    <p>Are your plant-based meals covering all essential amino acids? Let's find out.</p>
+  </div>
+</section>
+
+<div class="dp-container">
+  <div class="dp-tool-container">
+    <div class="dp-form-row">
+      <div class="dp-form-group">
+        <label for="bodyWeight">Body Weight (kg)</label>
+        <input type="number" id="bodyWeight" placeholder="e.g., 75" min="30" max="300" step="0.1">
+      </div>
+      <div class="dp-form-group">
+        <label for="activityLevel">Activity Level</label>
+        <select id="activityLevel">
+          <option value="sedentary">Sedentary</option>
+          <option value="light">Light</option>
+          <option value="moderate" selected>Moderate</option>
+          <option value="active">Active</option>
+          <option value="very">Very Active</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:24px;">
+      <label style="font-weight:600;display:block;margin-bottom:8px;">Add Plant-Based Foods:</label>
+      <div id="foodSelector" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
+    </div>
+    <div class="dp-form-group">
+      <button class="dp-btn dp-btn-primary" onclick="calculateAdequacy()" style="width:100%;">Calculate Adequacy</button>
+    </div>
+
+    <div class="dp-results-panel" id="adequacyResults" style="display:none;">
+      <h3>Amino Acid Coverage</h3>
+      <div class="dp-chart-container" style="height:250px;">
+        <canvas id="adequacyChart" width="800" height="250"></canvas>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:24px;">
+        <div style="text-align:center;padding:20px;background:rgba(37,99,235,0.05);border-radius:12px;border:2px solid var(--dp-primary);">
+          <div style="font-size:2rem;font-weight:800;color:var(--dp-primary);" id="totalProtein">0g</div>
+          <div style="font-size:0.85rem;color:var(--dp-text-light);">Total Protein</div>
+          <div style="font-size:0.75rem;color:var(--dp-text-light);" id="proteinTarget">Target: 0g</div>
+        </div>
+        <div style="text-align:center;padding:20px;background:rgba(245,158,11,0.05);border-radius:12px;border:2px solid var(--dp-secondary);">
+          <div style="font-size:2rem;font-weight:800;color:var(--dp-secondary);" id="lysineScore">0%</div>
+          <div style="font-size:0.85rem;color:var(--dp-text-light);">Lysine Coverage</div>
+          <div style="font-size:0.75rem;color:var(--dp-text-light);">Limiting AA for grains</div>
+        </div>
+        <div style="text-align:center;padding:20px;background:rgba(16,185,129,0.05);border-radius:12px;border:2px solid var(--dp-accent);">
+          <div style="font-size:2rem;font-weight:800;color:var(--dp-accent);" id="methionineScore">0%</div>
+          <div style="font-size:0.85rem;color:var(--dp-text-light);">Methionine Coverage</div>
+          <div style="font-size:0.75rem;color:var(--dp-text-light);">Limiting AA for legumes</div>
+        </div>
+      </div>
+      <div id="adequacyFeedback" style="margin-top:24px;padding:16px;background:rgba(37,99,235,0.05);border-radius:8px;"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;">
+      <button class="dp-btn dp-btn-secondary" onclick="exportAdequacy()">📄 Export Report</button>
+      <button class="dp-btn dp-btn-secondary" onclick="compareAdequacy()">📊 Compare Meals</button>
+      <button class="dp-btn dp-btn-secondary" onclick="resetAdequacy()" style="margin-left:auto;color:#dc2626;border-color:#dc2626;">🗑️ Reset</button>
+    </div>
+
+    <div style="margin-top:32px;">
+      <h3>Saved Meals</h3>
+      <div id="savedMeals"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Tool Description -->
+<div class="dp-container" style="margin-top:48px;margin-bottom:48px;max-width:800px;">
+  <h2 style="font-size:1.75rem;color:var(--dp-dark);margin-bottom:16px;">How This Calculator Works</h2>
+  <p style="color:var(--dp-text);line-height:1.8;margin-bottom:16px;">This tool checks if your plant-based meals provide adequate lysine and methionine — the two most commonly limiting amino acids in plant diets. Lysine is low in grains. Methionine is low in legumes. Together, they determine protein quality more than total grams alone.</p>
+  <p style="color:var(--dp-text);line-height:1.8;margin-bottom:16px;"><strong>Plant protein adjustment:</strong> Because plant proteins have lower bioavailability (60-85% vs 90-99% for animal), we increase your target by 30% automatically. A 75kg active vegan needs ~130g/day, not 100g. The stacked bar chart shows your coverage of total protein, lysine, and methionine side by side.</p>
+  <p style="color:var(--dp-text);line-height:1.8;"><strong>Complementary pairing:</strong> The tool implicitly rewards combinations. Rice + beans, hummus + pita, or pea + rice protein powder all improve scores because they cover each other's amino acid gaps. Single-source plant proteins (like straight rice protein) will show lower adequacy.</p>
+</div>
+
+
+<!-- Share Section -->
+<div class="dp-share-section" style="margin-top:24px;padding:20px;background:var(--dp-card-bg);border-radius:12px;border:1px solid var(--dp-border);">
+  <h4 style="margin-bottom:12px;font-size:1rem;">Share Your Results</h4>
+  
+<div class="dp-container"><div id="tool_middle" data-ad-slot="tool_middle" class="dp-ad-slot"></div></div>
+<div class="dp-share-buttons" style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button onclick="shareTo('twitter')" class="dp-btn dp-btn-secondary" style="display:flex;align-items:center;gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      Share on X
+    </button>
+    <button onclick="shareTo('facebook')" class="dp-btn dp-btn-secondary" style="display:flex;align-items:center;gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      Facebook
+    </button>
+    <button onclick="shareTo('linkedin')" class="dp-btn dp-btn-secondary" style="display:flex;align-items:center;gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </button>
+    <button onclick="shareTo('copy')" class="dp-btn dp-btn-secondary" style="display:flex;align-items:center;gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Copy Link
+    </button>
+  </div>
+  <p id="dp-share-msg" style="margin-top:10px;font-size:0.85rem;color:var(--dp-accent);display:none;">Link copied to clipboard!</p>
+</div>
+
+<!-- Related Articles -->
+<div class="dp-container" style="margin-top:64px;">
+  <h2 style="font-size:1.75rem;color:var(--dp-dark);margin-bottom:24px;">Related Articles</h2>
+  <div class="dp-grid dp-grid-3">
+    <a href="../blog/the-complete-guide-to-plant-based-protein-combinations.html" class="dp-article-card">
+        <img src="../images/blog/the-complete-guide-to-plant-based-protein-combinations.jpg" alt="The Complete Guide to Plant-Based Protein Combinations" class="dp-article-card-image" width="400" height="200" loading="lazy">
+        <div class="dp-article-card-body">
+          <span class="dp-article-card-tag">Tutorial</span>
+          <h3>The Complete Guide to Plant-Based Protein Combinations</h3>
+          <p>How to combine grains and legumes for complete amino acid profiles.</p>
+        </div>
+      </a>
+<a href="../blog/the-protein-powder-that-saved-my-vegan-clients-competition-prep.html" class="dp-article-card">
+        <img src="../images/blog/the-protein-powder-that-saved-my-vegan-clients-competition-prep.jpg" alt="The Protein Powder That Saved My Vegan Client's Competition Prep" class="dp-article-card-image" width="400" height="200" loading="lazy">
+        <div class="dp-article-card-body">
+          <span class="dp-article-card-tag">Story</span>
+          <h3>The Protein Powder That Saved My Vegan Client's Competition Prep</h3>
+          <p>Four weeks out from a show, protein was falling off a cliff. Pea-rice blend to the rescue.</p>
+        </div>
+      </a>
+<a href="../blog/the-ultimate-guide-to-protein-sources-animal-vs-plant.html" class="dp-article-card">
+        <img src="../images/blog/the-ultimate-guide-to-protein-sources-animal-vs-plant.jpg" alt="The Ultimate Guide to Protein Sources: Animal vs Plant" class="dp-article-card-image" width="400" height="200" loading="lazy">
+        <div class="dp-article-card-body">
+          <span class="dp-article-card-tag">Concept</span>
+          <h3>The Ultimate Guide to Protein Sources: Animal vs Plant</h3>
+          <p>Complete vs incomplete. Leucine vs lysine. The real differences and how to optimize both.</p>
+        </div>
+      </a>
+  </div>
+</div>
+
+<!-- Related Tools -->
+<div class="dp-container" style="margin-top:64px;margin-bottom:48px;">
+  <h2 style="font-size:1.75rem;color:var(--dp-dark);margin-bottom:24px;">Try These Tools Next</h2>
+  <div class="dp-grid dp-grid-3">
+    <a href="./protein-source-comparator.html" class="dp-tool-card">
+        <div class="dp-tool-icon">⚖️</div>
+        <h3>Protein Source Comparator</h3>
+        <p>Compare cost, leucine, PDCAAS, and digestibility across protein sources.</p>
+        <span class="dp-btn dp-btn-primary" style="margin-top:8px;">Try Tool</span>
+      </a>
+<a href="./protein-intake-calculator.html" class="dp-tool-card">
+        <div class="dp-tool-icon">🥩</div>
+        <h3>Protein Intake Calculator</h3>
+        <p>Calculate your exact daily protein needs based on weight, activity, and goal.</p>
+        <span class="dp-btn dp-btn-primary" style="margin-top:8px;">Try Tool</span>
+      </a>
+  </div>
+</div>
+
+<div class="dp-container"><div id="tool_bottom" data-ad-slot="tool_bottom" class="dp-ad-slot"></div></div>
+
+<footer class="dp-footer">
+  <div class="dp-container">
+    <div class="dp-footer-grid">
+      <div><h4>DailyProtein.net</h4><p style="font-size:0.9rem;color:rgba(255,255,255,0.6);margin-top:8px;">Science-backed protein calculators.</p></div>
+      <div><h4>Tools</h4><a href="./protein-intake-calculator.html">Protein Calculator</a><a href="./macro-split-planner.html">Macro Planner</a><a href="./protein-source-comparator.html">Source Comparator</a><a href="./meal-protein-tracker.html">Meal Tracker</a><a href="./vegan-protein-adequacy-calculator.html">Vegan Calculator</a><a href="./post-workout-protein-timing-tool.html">Timing Tool</a></div>
+      <div><h4>Company</h4><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../faq.html">FAQ</a><a href="../privacy.html">Privacy</a></div>
+      <div><h4>Legal</h4><a href="../disclaimer.html">Disclaimer</a><a href="../disclosure.html">Affiliate Disclosure</a></div>
+    </div>
+    <div class="dp-footer-bottom"><p>© 2026 DailyProtein.net. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script src="../ads-loader.js"></script>
+<script>
+(function(){
+  const FOODS = [
+    {name:'Tofu (1/2 block)', protein:20, lysine:1.4, methionine:0.4, servings:1},
+    {name:'Lentils (1 cup cooked)', protein:18, lysine:1.8, methionine:0.2, servings:1},
+    {name:'Black Beans (1 cup)', protein:15, lysine:1.2, methionine:0.3, servings:1},
+    {name:'Chickpeas (1 cup)', protein:15, lysine:1.3, methionine:0.3, servings:1},
+    {name:'Brown Rice (1 cup)', protein:5, lysine:0.2, methionine:0.3, servings:1},
+    {name:'Quinoa (1 cup cooked)', protein:8, lysine:0.7, methionine:0.3, servings:1},
+    {name:'Oats (1 cup cooked)', protein:6, lysine:0.3, methionine:0.2, servings:1},
+    {name:'Peanut Butter (2 tbsp)', protein:8, lysine:0.3, methionine:0.2, servings:1},
+    {name:'Almonds (1 oz)', protein:6, lysine:0.2, methionine:0.1, servings:1},
+    {name:'Pea Protein (1 scoop)', protein:25, lysine:2.1, methionine:0.3, servings:1},
+    {name:'Rice Protein (1 scoop)', protein:25, lysine:0.5, methionine:0.8, servings:1},
+    {name:'Soy Milk (1 cup)', protein:8, lysine:0.6, methionine:0.2, servings:1},
+    {name:'Tempeh (1/2 cup)', protein:16, lysine:1.2, methionine:0.3, servings:1},
+    {name:'Seitan (3 oz)', protein:21, lysine:0.5, methionine:0.4, servings:1},
+    {name:'Chia Seeds (2 tbsp)', protein:4, lysine:0.2, methionine:0.1, servings:1},
+    {name:'Hemp Seeds (3 tbsp)', protein:10, lysine:0.4, methionine:0.3, servings:1}
+  ];
+  const KEY = 'dp_vegan_meals';
+
+  function initFoods() {
+    const container = document.getElementById('foodSelector');
+    container.innerHTML = FOODS.map((f,i) => `<div style="display:flex;align-items:center;gap:8px;padding:12px;background:var(--dp-light);border-radius:8px;">
+      <input type="checkbox" id="food-${i}" value="${i}" style="width:auto;">
+      <label for="food-${i}" style="flex:1;cursor:pointer;font-size:0.9rem;">
+        <strong>${f.name}</strong><br>
+        <span style="color:var(--dp-text-light);font-size:0.8rem;">${f.protein}g protein | Lys:${f.lysine}g | Met:${f.methionine}g</span>
+      </label>
+      <input type="number" id="qty-${i}" value="1" min="0.5" max="10" step="0.5" style="width:60px;padding:4px;">
+    </div>`).join('');
+  }
+
+  function calculateAdequacy() {
+    const weight = parseFloat(document.getElementById('bodyWeight').value);
+    const activity = document.getElementById('activityLevel').value;
+    if (!weight || weight < 30) { alert('Enter valid body weight (kg)'); return; }
+
+    const mult = {sedentary:0.8, light:1.0, moderate:1.2, active:1.4, very:1.6};
+    const target = Math.round(weight * (mult[activity] || 1.2) * 1.3); // +30% for plant bioavailability
+
+    const selected = [];
+    let totalProtein = 0, totalLysine = 0, totalMethionine = 0;
+    FOODS.forEach((f,i) => {
+      if (document.getElementById('food-'+i).checked) {
+        const qty = parseFloat(document.getElementById('qty-'+i).value) || 1;
+        totalProtein += f.protein * qty;
+        totalLysine += f.lysine * qty;
+        totalMethionine += f.methionine * qty;
+        selected.push({...f, qty});
+      }
+    });
+
+    if (!selected.length) { alert('Select at least one food'); return; }
+
+    const lysineNeed = weight * 0.038; // g/day for adults
+    const methionineNeed = weight * 0.019;
+    const lysinePct = Math.min(100, Math.round((totalLysine / lysineNeed) * 100));
+    const methioninePct = Math.min(100, Math.round((totalMethionine / methionineNeed) * 100));
+
+    document.getElementById('adequacyResults').style.display = 'block';
+    document.getElementById('totalProtein').textContent = totalProtein.toFixed(1) + 'g';
+    document.getElementById('proteinTarget').textContent = 'Target: ' + target + 'g (plant-adjusted)';
+    document.getElementById('lysineScore').textContent = lysinePct + '%';
+    document.getElementById('methionineScore').textContent = methioninePct + '%';
+
+    // Stacked bar chart
+    const canvas = document.getElementById('adequacyChart');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const barH = 40, gap = 30, startY = 30;
+    const maxW = canvas.width - 200;
+
+    ['Protein', 'Lysine', 'Methionine'].forEach((label, i) => {
+      const val = [totalProtein/target, totalLysine/lysineNeed, totalMethionine/methionineNeed][i];
+      const w = Math.min(maxW, val * maxW);
+      const y = startY + i * (barH + gap);
+      ctx.fillStyle = '#e5e7eb'; ctx.fillRect(100, y, maxW, barH);
+      ctx.fillStyle = ['#2563eb','#f59e0b','#10b981'][i]; ctx.fillRect(100, y, w, barH);
+      ctx.fillStyle = '#374151'; ctx.font = 'bold 14px sans-serif'; ctx.fillText(label, 10, y+28);
+      ctx.fillStyle = '#6b7280'; ctx.font = '12px sans-serif'; ctx.fillText((val*100).toFixed(0) + '%', 100+w+10, y+28);
+    });
+
+    // Feedback
+    const fb = document.getElementById('adequacyFeedback');
+    let msg = '';
+    if (totalProtein < target) msg += `⚠️ Protein short by ${(target-totalProtein).toFixed(1)}g. `;
+    else msg += '✅ Protein target met. ';
+    if (lysinePct < 100) msg += `Lysine low (${lysinePct}%). Add more legumes or soy. `;
+    if (methioninePct < 100) msg += `Methionine low (${methioninePct}%). Add more grains or seeds. `;
+    if (lysinePct >= 100 && methioninePct >= 100 && totalProtein >= target) msg += 'Excellent plant-based coverage!';
+    fb.innerHTML = `<p style="margin:0;font-size:0.95rem;">${msg}</p>`;
+
+    saveMeal({date: new Date().toISOString(), foods: selected, totalProtein, target, lysinePct, methioninePct});
+    renderSaved();
+  }
+
+  function saveMeal(meal) {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+    saved.unshift(meal);
+    localStorage.setItem(KEY, JSON.stringify(saved.slice(0, 10)));
+  }
+
+  function renderSaved() {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+    const container = document.getElementById('savedMeals');
+    container.innerHTML = saved.length ? saved.map((m,i) => `<div style="display:flex;justify-content:space-between;padding:12px;background:var(--dp-light);border-radius:8px;margin-bottom:8px;">
+      <div><strong>${new Date(m.date).toLocaleDateString()}</strong> — ${m.totalProtein.toFixed(1)}g protein | Lys:${m.lysinePct}% | Met:${m.methioninePct}%</div>
+      <button onclick="deleteSavedMeal(${i})" style="background:none;border:none;color:#dc2626;cursor:pointer;">🗑️</button>
+    </div>`).join('') : '<p style="color:var(--dp-text-light);">No saved meals yet.</p>';
+  }
+
+  function deleteSavedMeal(i) { const s = JSON.parse(localStorage.getItem(KEY) || '[]'); s.splice(i,1); localStorage.setItem(KEY, JSON.stringify(s)); renderSaved(); }
+  function exportAdequacy() {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+    if (!saved.length) { alert('No data to export'); return; }
+    let csv = 'Date,Protein(g),Target(g),Lysine%,Methionine%\n';
+    saved.forEach(m => { csv += `${m.date},${m.totalProtein},${m.target},${m.lysinePct},${m.methioninePct}\n`; });
+    const blob = new Blob([csv], {type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'vegan-adequacy.csv'; a.click();
+  }
+  function compareAdequacy() {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+    if (saved.length < 2) { alert('Need 2+ saved meals'); return; }
+    const latest = saved[0], prev = saved[1];
+    alert(`Latest: ${latest.totalProtein.toFixed(1)}g P, Lys:${latest.lysinePct}%, Met:${latest.methioninePct}%\nPrevious: ${prev.totalProtein.toFixed(1)}g P, Lys:${prev.lysinePct}%, Met:${prev.methioninePct}%`);
+  }
+  function resetAdequacy() {
+    if (!confirm('Clear all selections and saved meals?')) return;
+    localStorage.removeItem(KEY);
+    FOODS.forEach((f,i) => { document.getElementById('food-'+i).checked = false; document.getElementById('qty-'+i).value = 1; });
+    document.getElementById('adequacyResults').style.display = 'none';
+    renderSaved();
+  }
+
+  window.calculateAdequacy = calculateAdequacy;
+  window.deleteSavedMeal = deleteSavedMeal;
+  window.exportAdequacy = exportAdequacy;
+  window.compareAdequacy = compareAdequacy;
+  window.resetAdequacy = resetAdequacy;
+
+  initFoods();
+  renderSaved();
+})();
+</script>
+<script>
+function shareTo(platform) {
+  var url = encodeURIComponent(window.location.href);
+  var text = encodeURIComponent("Check out this protein calculator from DailyProtein.net");
+  var shareUrl = "";
+  if (platform === "twitter") {
+    shareUrl = "https://twitter.com/intent/tweet?url=" + url + "&text=" + text;
+  } else if (platform === "facebook") {
+    shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + url;
+  } else if (platform === "linkedin") {
+    shareUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" + url;
+  } else if (platform === "copy") {
+    navigator.clipboard.writeText(window.location.href).then(function() {
+      var msg = document.getElementById("dp-share-msg");
+      if (msg) { msg.style.display = "block"; setTimeout(function(){ msg.style.display = "none"; }, 2000); }
+    });
+    return;
+  }
+  if (shareUrl) window.open(shareUrl, "_blank", "width=600,height=400");
+}
+</script>
+</body>
+</html>
